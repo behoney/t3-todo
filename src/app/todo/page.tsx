@@ -1,4 +1,3 @@
-// src/app/todo/page.tsx
 import { TodoList } from "@/app/_components/TodoList";
 import { getServerAuthSession } from "@/server/auth";
 import { api } from "@/trpc/server";

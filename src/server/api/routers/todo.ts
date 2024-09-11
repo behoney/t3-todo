@@ -1,10 +1,18 @@
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 
 export const todoRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.todo.findMany({
       where: { userId: ctx.session.user.id },
+      orderBy: { createdAt: "desc" },
+    });
+  }),
+
+  getWhole: publicProcedure.query(async ({ ctx }) => {
+    return ctx.db.todo.findMany({
+      include: { user: true },
+      where: { completed: false },
       orderBy: { createdAt: "desc" },
     });
   }),
