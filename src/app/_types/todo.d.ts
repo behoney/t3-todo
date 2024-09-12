@@ -1,10 +1,12 @@
-  export interface Todo {
-    id: string;
-    text: string;
-    completed: boolean;
-  }
+import type { Todo as PrismaTodo } from "@prisma/client";
 
-export interface TodoWithUser extends Todo {
+export interface Todo {
+  id: string;
+  text: string;
+  completed: boolean;
+}
+
+export interface TodoWithUser extends PrismaTodo {
   user: {
     name: string;
   };
