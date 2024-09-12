@@ -1,6 +1,8 @@
+"use client"
 
-
+import { api } from "@/trpc/react";
 import { type Todo } from "@prisma/client";
+import { useEffect } from "react";
 
 // TODO:: move TodoWithUser to proper location
 export interface TodoWithUser extends Todo {
@@ -15,35 +17,26 @@ export default function OurTodoList({
 }: {
   initialTodos: TodoWithUser[]
 }) {
-  // TODO:: refresh every 10 seconds or whenever the todo is updated
+  const todoQuery = api.todo.getWhole.useQuery();
+  const todos = todoQuery.data ?? initialTodos;
 
-  // const [todos, setTodos] = useState<TodoWithUser[]>(initialTodos);
-
-  // const updateTodos = async () => {
-  //   try {
-  //     const todos = await api.todo.getWhole();
-  //     setTodos(todos as TodoWithUser[])
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   void updateTodos();
-  //   setInterval(() => {
-  //     void updateTodos();
-  //   }, 10000)
-  // }, [])
+  useEffect(() => {
+    const interval = setInterval(() => {
+      void todoQuery.refetch();
+    }, 15000);
+    return () => clearInterval(interval);
+  }, [])
 
   return (
 
-    <div className="flex flex-col gap-4 rounded-md bg-white p-4 w-full">
-      {initialTodos.map((todo) => {
+    <div className="flex flex-col gap-4 rounded-md bg-white p-4 w-full max-w-md">
+      {todos.map((todo) => {
         return (
 
           <div
             key={todo.id}
-            className="rounded-md bg-gray-100 px-4 py-2 text-black w-full"
+            className={`rounded-md bg-gray-100 px-4 py-2 text-black w-full
+        ${todoQuery.isRefetching ? "bg-gray-200" : ""}`}
           >
             <p className="text-lg font-bold">{todo.text}</p>
             <desc className="text-sm w-full text-right text-gray-500">{`By ${todo.user.name} @ ${todo.createdAt.toLocaleDateString()}`}</desc>

@@ -1,9 +1,8 @@
 import { api } from "@/trpc/server";
-import OurTodoList, { TodoWithUser } from "../_components/OurTodoList";
+import OurTodoList, { type TodoWithUser } from "../_components/OurTodoList";
 
 
 export default async function OtherPage() {
-
 
   const initialTodos = await api.todo.getWhole() as TodoWithUser[];
 
