@@ -9,7 +9,8 @@ import type { Todo } from "../_types/todo";
 export function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
   const [todos, setTodos] = useState<Todo[]>(initialTodos);
   const [newTodoText, setNewTodoText] = useState("");
-
+  // TODO:: client side pagination
+  const [page, setPage] = useState(1);
 
   const addTodoMutation = api.todo.create.useMutation({
     onSuccess: (newTodo) => {
@@ -41,6 +42,7 @@ export function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
 
   const validateTodoText = newTodoText.trim().length > 4;
 
+
   return (
     <div className="w-full max-w-md">
       <form onSubmit={handleAddTodo} className="mb-4">
@@ -62,11 +64,10 @@ export function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
         </button>
       </form>
       <ul>
-        {todos.map((todo) => (
+        {todos.slice(0, page * 10).map((todo) => (
           <li key={todo.id} className="flex items-center justify-between mb-2">
             <span
-              className={`flex-grow ${todo.completed ? "line-through text-gray-500" : ""
-                }`}
+              className={`flex-grow ${todo.completed ? "line-through text-gray-500" : ""}`}
             >
               {todo.text}
             </span>
@@ -89,6 +90,16 @@ export function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
           </li>
         ))}
       </ul>
+      <div className="flex justify-center mt-4">
+        <button
+          onClick={() => setPage(Math.max(1, Math.min(page + 1, Math.ceil(todos.length / 10))))}
+          className="mr-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={page * 10 >= todos.length}
+          type="button"
+        >
+          load more
+        </button>
+      </div>
     </div>
   );
 }

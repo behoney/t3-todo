@@ -14,6 +14,7 @@ export const todoRouter = createTRPCRouter({
       include: { user: true },
       where: { completed: false },
       orderBy: { createdAt: "desc" },
+      take: 10,
     });
   }),
 
