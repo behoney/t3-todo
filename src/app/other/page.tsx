@@ -1,5 +1,6 @@
 import { api } from "@/trpc/server";
-import OurTodoList, { type TodoWithUser } from "../_components/OurTodoList";
+import OurTodoList from "../_components/OurTodoList";
+import type { TodoWithUser } from "../_types/todo";
 
 
 export default async function OtherPage() {

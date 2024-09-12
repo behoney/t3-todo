@@ -2,16 +2,14 @@
 
 import { api } from "@/trpc/react";
 import { useState } from "react";
+import type { Todo } from "../_types/todo";
 
-interface Todo {
-  id: string;
-  text: string;
-  completed: boolean;
-}
+
 
 export function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
   const [todos, setTodos] = useState<Todo[]>(initialTodos);
   const [newTodoText, setNewTodoText] = useState("");
+
 
   const addTodoMutation = api.todo.create.useMutation({
     onSuccess: (newTodo) => {
@@ -41,6 +39,8 @@ export function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
     }
   };
 
+  const validateTodoText = newTodoText.trim().length > 4;
+
   return (
     <div className="w-full max-w-md">
       <form onSubmit={handleAddTodo} className="mb-4">
@@ -50,10 +50,13 @@ export function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
           onChange={(e) => setNewTodoText(e.target.value)}
           placeholder="Add a new todo"
           className="w-full p-2 text-black rounded"
+          required
+          disabled={addTodoMutation.isPending}
         />
         <button
           type="submit"
-          className="mt-2 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className="mt-2 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={addTodoMutation.isPending || !validateTodoText}
         >
           Add Todo
         </button>
@@ -68,14 +71,18 @@ export function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
               {todo.text}
             </span>
             <button
+              disabled={toggleTodoMutation.isPending}
               onClick={() => toggleTodoMutation.mutate({ id: todo.id })}
-              className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded"
+              className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+              type="button"
             >
               Toggle
             </button>
             <button
+              disabled={deleteTodoMutation.isPending}
               onClick={() => deleteTodoMutation.mutate({ id: todo.id })}
-              className="ml-2 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
+              className="ml-2 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+              type="button"
             >
               Delete
             </button>

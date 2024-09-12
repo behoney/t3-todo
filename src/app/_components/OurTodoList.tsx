@@ -1,21 +1,14 @@
 "use client"
 
 import { api } from "@/trpc/react";
-import { type Todo } from "@prisma/client";
 import { useEffect } from "react";
-
-// TODO:: move TodoWithUser to proper location
-export interface TodoWithUser extends Todo {
-  user: {
-    name: string;
-  };
-}
+import type { TodoWithUser } from "../_types/todo";
 
 
 export default function OurTodoList({
   initialTodos
 }: {
-  initialTodos: TodoWithUser[]
+    initialTodos: readonly TodoWithUser[]
 }) {
   const todoQuery = api.todo.getWhole.useQuery();
   const todos = todoQuery.data ?? initialTodos;
